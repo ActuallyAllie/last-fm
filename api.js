@@ -15,7 +15,7 @@ async function getAlbumInfo(mbid) {
         const response = await axios.get(`${musicBrainzUrl}/release/${mbid}`, {
             headers: musicBrainzHeaders,
             params: {
-                inc: 'release-groups'
+                inc: 'release-groups+labels'
             }
         });
         return response.data;
