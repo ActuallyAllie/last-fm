@@ -44,7 +44,8 @@ async function getTopAlbums(user) {
             user,
             api_key: process.env.LAST_FM_API_KEY,
             method: 'user.gettopalbums',
-            format: 'json'
+            format: 'json',
+            limit: 100
         }
     });
     return response.data;
