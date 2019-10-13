@@ -1,29 +1,33 @@
 const Knex = require('knex');
-const Knex = require('knex');
 
 const knex = Knex({
     client: 'sqlite3',
     connection: {
-        filename: 'last-fm.sqlite'
-    }
+        filename: 'last-fm.sqlite',
+    },
 });
 
 async function connect() {
     await knex.migrate.latest({
         directory: './migrations',
-        tableName: 'migrations'
+        tableName: 'migrations',
     });
 }
 
-async function getAlbum(mbid) {
-    const albums = await knex('albums').select().where('mbid', mbid);
+async function getAlbum(mbid, url) {
+    const albums = await knex('albums')
+        .select()
+        .where('mbid', mbid)
+        .orWhere('url', url);
     return albums.length ? albums[0] : null;
 }
 
-async function insertAlbum() {
-
+async function insertAlbum(album) {
+    return knex('albums').insert(album);
 }
 
-modules.exports = {
-    connect
+module.exports = {
+    connect,
+    getAlbum,
+    insertAlbum,
 };

@@ -11,6 +11,8 @@ const musicBrainzHeaders = {
 };
 
 async function getAlbumInfo(mbid) {
+    // don't want to hit musicbrainz api load limits
+    await new Promise(resolve => setTimeout(() => resolve(), 1000));
     try {
         const response = await axios.get(`${musicBrainzUrl}/release/${mbid}`, {
             headers: musicBrainzHeaders,
@@ -38,17 +40,22 @@ async function searchForAlbumInfo(release) {
     }
 }
 
-async function getTopAlbums(user) {
-    const response = await axios.get(lastFmUrl, {
-        params: {
-            user,
-            api_key: process.env.LAST_FM_API_KEY,
-            method: 'user.gettopalbums',
-            format: 'json',
-            limit: 100
-        }
-    });
-    return response.data;
+async function getTopAlbums(page = 1) {
+    try {
+        const response = await axios.get(lastFmUrl, {
+            params: {
+                page,
+                user: process.env.LAST_FM_USER,
+                api_key: process.env.LAST_FM_API_KEY,
+                method: 'user.gettopalbums',
+                format: 'json',
+                limit: 250
+            }
+        });
+        return response.data;
+    } catch(err) {
+        console.log(err);
+    }
 }
 
 module.exports = {
